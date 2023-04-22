@@ -2,39 +2,23 @@ import java.io.*;
 import java.util.Random;
 
 public class FileArray {
-  private final String filePathName;
+  protected final String filePathName;
 
 
   // loads an existing file
   public FileArray(String filePathName) {
     this.filePathName = filePathName;
-
-    //controllare se esiste il filepath
   }
 
   // creates new file with n random elements
   public FileArray(String filePathName, int n) throws IOException {
     this.filePathName = filePathName;
-
-    int[] numbers = new int[n + 1];
-    Random random = new Random();
-    numbers[0] = n;
-    for (int i = 1; i < n + 1; i++) {
-      numbers[i] = random.nextInt(1025);
-      // System.out.println(i + "\t" + numbers[i]);
-    }
-    FileOutputStream fos = new FileOutputStream(filePathName);
-    try (fos; DataOutputStream dos = new DataOutputStream(fos)) {
-      for (int i = 0; i < n + 1; i++) {
-        dos.writeInt(numbers[i]);
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    int[] numbers = generateNumbers(n);
+    this.writeFile(numbers);
   }
 
   // pretty print with at most 5 aligned elements per row
-  public void print() {
+  public void print() throws IOException {
     int[] numbers = readFile();
     int n = numbers[0];
     int zeroOrder = (Integer.toString(n)).length();
@@ -53,7 +37,7 @@ public class FileArray {
   }
 
   //increment all elements
-  public void incrementAll() throws FileNotFoundException {
+  public void incrementAll() throws IOException {
     int[] numbers = readFile();
     for (int i = 1; i < numbers.length; i++) {
       numbers[i]++;
@@ -61,7 +45,7 @@ public class FileArray {
     writeFile(numbers);
   }
 
-  public int[] readFile() {
+  protected int[] readFile() throws IOException {
     int[] numbers = new int[0];
     try {
       FileInputStream fis = new FileInputStream(filePathName);
@@ -79,7 +63,7 @@ public class FileArray {
     return numbers;
   }
 
-  public void writeFile(int[] numbers) throws FileNotFoundException {
+  protected void writeFile(int[] numbers) throws IOException {
     FileOutputStream fos = new FileOutputStream(filePathName);
     try (fos; DataOutputStream dos = new DataOutputStream(fos)) {
 
@@ -89,6 +73,17 @@ public class FileArray {
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
+
+  protected static int[] generateNumbers(int n) {
+    int[] numbers = new int[n + 1];
+    Random random = new Random();
+    numbers[0] = n;
+    for (int i = 1; i < n + 1; i++) {
+      numbers[i] = random.nextInt(1025);
+      // System.out.println(i + "\t" + numbers[i]);
+    }
+    return numbers;
   }
 
 }
